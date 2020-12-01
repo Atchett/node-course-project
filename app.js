@@ -4,6 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 
 const app = express();
+require("dotenv").config();
 
 app.set("view engine", "ejs");
 app.set("views", "views");
