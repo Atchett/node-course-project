@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --ignore 'data/' app.js",
+    "start": "nodemon app.js",
     "start-server": "node app.js"
   },
   "author": "John Spurgin",
@@ -14,11 +14,13 @@
     "nodemon": "^1.18.3"
   },
   "dependencies": {
+    "@types/mongodb": "^3.5.34",
     "body-parser": "^1.18.3",
     "dotenv": "^8.2.0",
     "ejs": "^2.6.1",
     "express": "^4.16.3",
     "express-handlebars": "^3.0.0",
+    "mongodb": "^3.6.3",
     "mysql2": "^2.2.5",
     "pug": "^2.0.3",
     "sequelize": "^6.3.5"
