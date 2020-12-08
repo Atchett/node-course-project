@@ -5,12 +5,15 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const csrf = require("csurf");
+const flash = require("connect-flash");
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
 
 const app = express();
 // const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.hrm10.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`;
+const csrfProtection = csrf();
 
 const MONGODB_OLD_URIFORMAT = `mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-shard-00-00.hrm10.mongodb.net:27017,cluster0-shard-00-01.hrm10.mongodb.net:27017,cluster0-shard-00-02.hrm10.mongodb.net:27017/${process.env.MONGO_DB}?ssl=true&replicaSet=atlas-9469ec-shard-0&authSource=admin&retryWrites=true&w=majority`;
 
@@ -45,6 +48,8 @@ app.use(
     store: store,
   })
 );
+app.use(csrfProtection);
+app.use(flash());
 
 app.use((req, res, next) => {
   if (!req.session.user) {
@@ -60,6 +65,12 @@ app.use((req, res, next) => {
     });
 });
 
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
@@ -70,16 +81,6 @@ app.use(errorController.get404);
 mongoose
   .connect(MONGODB_OLD_URIFORMAT, MONGODB_CONNECTION_OPTIONS)
   .then((result) => {
-    User.findOne().then((user) => {
-      if (!user) {
-        const user = new User({
-          name: "John",
-          email: "john@test.com",
-          cart: { items: [] },
-        });
-        user.save();
-      }
-    });
     app.listen(3000);
   })
   .catch((err) => {
