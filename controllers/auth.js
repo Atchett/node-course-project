@@ -1,5 +1,8 @@
 const bcrypt = require("bcryptjs");
+const sgMail = require("@sendgrid/mail");
+
 const User = require("../models/user");
+sgMail.setApiKey(process.env.SENDGRID_KEY);
 
 // Login
 exports.getLogin = (req, res, next) => {
@@ -81,6 +84,13 @@ exports.postSignup = (req, res, next) => {
         })
         .then((result) => {
           res.redirect("/login");
+          const msg = {
+            to: email,
+            from: "johnspurgin@gmail.com",
+            subject: "Signup succeeded",
+            html: "<h1>Successfully signed up</h1>",
+          };
+          return sgMail.send(msg);
         })
         .catch((err) => {
           console.log(err);
