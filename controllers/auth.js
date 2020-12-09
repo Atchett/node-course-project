@@ -67,11 +67,15 @@ exports.postLogin = (req, res, next) => {
           });
         })
         .catch((err) => {
-          console.log(err);
+          const error = new Error(`postLogin failed. Error: ${err}`);
+          error.httpStatusCode = 500;
+          return next(error);
         });
     })
     .catch((err) => {
-      console.log(err);
+      const error = new Error(`postLogin failed. Error: ${err}`);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -128,7 +132,9 @@ exports.postSignup = (req, res, next) => {
       return sgMail.send(msg);
     })
     .catch((err) => {
-      console.log(err);
+      const error = new Error(`postSignup failed. Error: ${err}`);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -194,7 +200,9 @@ exports.postReset = (req, res, next) => {
         return sgMail.send(msg);
       })
       .catch((err) => {
-        console.log(err);
+        const error = new Error(`postReset failed. Error: ${err}`);
+        error.httpStatusCode = 500;
+        return next(error);
       });
   });
 };
@@ -220,7 +228,9 @@ exports.getNewPassword = (req, res, next) => {
       });
     })
     .catch((err) => {
-      console.log(err);
+      const error = new Error(`getNewPassword failed. Error: ${err}`);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
 
@@ -243,6 +253,8 @@ exports.postNewPassword = (req, res, next) => {
       res.redirect("/login");
     })
     .catch((err) => {
-      console.log(err);
+      const error = new Error(`postNewPassword failed. Error: ${err}`);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };
