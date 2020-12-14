@@ -182,3 +182,22 @@ exports.postDeleteProduct = (req, res, next) => {
       return next(error);
     });
 };
+
+exports.deleteProduct = (req, res, next) => {
+  const { productId } = req.params;
+  Product.findById(productId)
+    .then((prod) => {
+      if (!prod) {
+        return next(new Error("Product could not be found"));
+      }
+      deleteFile(prod.imageUrl);
+      return Product.deleteOne({ _id: productId, userId: req.user._id });
+    })
+    .then(() => {
+      console.log(`Product ${productId} deleted`);
+      res.status(200).json({ message: "Successfully deleted product" });
+    })
+    .catch((err) => {
+      res.status(500).json({ message: "Failed to delete product" });
+    });
+};
